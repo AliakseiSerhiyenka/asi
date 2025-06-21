@@ -5,6 +5,5 @@ notebook
 streamlit~=1.44.1
 pandas~=2.2.3
 autogluon==1.2
-
-pip install catboost
-pip install sentence-transformers
+catboost
+sentence-transformers
