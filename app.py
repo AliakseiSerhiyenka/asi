@@ -3,6 +3,8 @@ import pandas as pd
 import random
 from autogluon.tabular import TabularPredictor
 
+# Ścieżki
+MODEL_PATH = "data/06_models/autogluon/"
 MOVIES_PATH = "data/01_raw/netflix_titles.csv"
 
 
@@ -17,10 +19,7 @@ def load_data():
 
 @st.cache_resource
 def load_model():
-    import pickle
-    with open("data/06_models/predictor.pkl", "rb") as f:
-        predictor = pickle.load(f)
-    return predictor
+    return TabularPredictor.load(MODEL_PATH)
 
 
 # Interfejs

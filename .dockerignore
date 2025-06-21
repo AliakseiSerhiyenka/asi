@@ -4,8 +4,10 @@ notebooks/
 conf/
 
 # Include the model and dataset needed for the app
-!data/06_models/autogluon/**
+
+!data/06_models/
 !data/01_raw/netflix_titles.csv
+!data/01_raw/my_rated_movies.csv
 
 # Ignore cache, logs, and envs
 __pycache__/

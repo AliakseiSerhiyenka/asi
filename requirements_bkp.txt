@@ -1,0 +1,9 @@
+ipython>=8.10
+jupyterlab>=3.0
+kedro~=0.19.13
+notebook
+streamlit~=1.44.1
+pandas~=2.2.3
+autogluon==1.2
+catboost
+sentence-transformers
