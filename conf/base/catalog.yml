@@ -1,0 +1,30 @@
+# Here you can define all your datasets by using simple YAML syntax.
+#
+# Documentation for this file format can be found in "The Data Catalog"
+# Link: https://docs.kedro.org/en/stable/data/data_catalog.html
+
+my_rated_movies:
+  type: pandas.CSVDataset
+  filepath: data/01_raw/my_rated_movies.csv
+  load_args:
+      sep: ','
+
+netflix_catalog:
+  type: pandas.CSVDataset
+  filepath: data/01_raw/netflix_titles.csv
+  load_args:
+    sep: ','
+
+prepared_training_data:
+  type: pandas.ParquetDataset
+  filepath: data/02_intermediate/prepared_training_data.parquet
+
+trained_model:
+  type: pickle.PickleDataset
+  filepath: data/06_models/autogluon_predictor.pkl
+
+recommendations:
+  type: pandas.CSVDataset
+  filepath: data/07_model_output/recommendations.csv
+  load_args:
+    sep: ','
