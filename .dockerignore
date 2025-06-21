@@ -1,5 +1,7 @@
 # Ignore all other data by default
 data/**
+notebooks/
+conf/
 
 # Include the model and dataset needed for the app
 !data/06_models/autogluon/**

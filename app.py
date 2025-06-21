@@ -3,8 +3,6 @@ import pandas as pd
 import random
 from autogluon.tabular import TabularPredictor
 
-# Ścieżki
-MODEL_PATH = "data/06_models/autogluon/"
 MOVIES_PATH = "data/01_raw/netflix_titles.csv"
 
 
