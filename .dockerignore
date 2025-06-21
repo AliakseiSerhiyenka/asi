@@ -1,0 +1,15 @@
+# Ignore all other data by default
+data/**
+
+# Include the model and dataset needed for the app
+!data/06_models/autogluon/**
+!data/01_raw/netflix_titles.csv
+
+# Ignore cache, logs, and envs
+__pycache__/
+*.py[cod]
+*.log
+*.DS_Store
+.venv/
+.env
+my_env/
