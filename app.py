@@ -7,16 +7,23 @@ from autogluon.tabular import TabularPredictor
 MODEL_PATH = "data/06_models/autogluon/"
 MOVIES_PATH = "data/01_raw/netflix_titles.csv"
 
+
 # Wczytaj dane i model
 @st.cache_data
 def load_data():
     df = pd.read_csv(MOVIES_PATH)
-    df["text"] = df["title"].astype(str) + ". " + df["description"].fillna('').astype(str) + ". Genres: " + df["genres"].fillna("[]").astype(str)
+    df["text"] = df["title"].astype(str) + ". " + df["description"].fillna('').astype(str) + ". Genres: " + df[
+        "genres"].fillna("[]").astype(str)
     return df
+
 
 @st.cache_resource
 def load_model():
-    return TabularPredictor.load(MODEL_PATH)
+    import pickle
+    with open("data/06_models/predictor.pkl", "rb") as f:
+        predictor = pickle.load(f)
+    return predictor
+
 
 # Interfejs
 st.title("🎬 Movie Recommender – Based on Your Taste")
