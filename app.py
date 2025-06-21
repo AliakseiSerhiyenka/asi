@@ -27,33 +27,38 @@ st.title("🎬 Movie Recommender – Based on Your Taste")
 df = load_data()
 predictor = load_model()
 
-# 🔍 Szukanie filmu
-movie_title_input = st.text_input("🔎 Wpisz tytuł filmu, który Ci się podoba:")
+# 🔍 Szukanie po słowie kluczowym
+keyword = st.text_input("🔎 Wpisz tytuł lub słowo kluczowe (np. 'Python', 'zombie', 'comedy'):")
 
-matching_titles = df[df["title"].str.contains(movie_title_input, case=False, na=False)]
-
-if not movie_title_input:
-    st.info("Wpisz nazwę filmu powyżej, aby rozpocząć.")
-elif matching_titles.empty:
-    st.warning("Nie znaleziono filmu o podanej nazwie.")
+if not keyword:
+    st.info("Wpisz słowo kluczowe powyżej, aby zobaczyć pasujące filmy.")
 else:
-    selected_movie = matching_titles.iloc[0]
-    st.success(f"Znaleziono: **{selected_movie['title']}**")
+    matches = df[df["text"].str.contains(keyword, case=False, na=False)]
 
-    if st.button("🔍 Pokaż rekomendacje"):
-        selected_text = pd.DataFrame({"text": [selected_movie["text"]]})
-        pred = predictor.predict(selected_text)
-        st.subheader("📈 Prognozowana Twoja ocena:")
-        st.write(f"**{selected_movie['title']}** → **{pred.values[0]:.2f} / 10**")
+    if matches.empty:
+        st.warning("Nie znaleziono żadnych pasujących filmów.")
+    else:
+        st.success(f"Znaleziono {len(matches)} filmów pasujących do: '{keyword}'")
 
-        # 🔝 Top 10
-        df["pred_rating"] = predictor.predict(df[["text"]])
-        top_movies = df[df["title"] != selected_movie["title"]].sort_values("pred_rating", ascending=False).head(10)
-        st.subheader("🎥 Top 10 rekomendacji:")
-        st.table(top_movies[["title", "pred_rating"]])
+        titles_list = matches["title"].unique()
+        selected_title = st.selectbox("🎯 Wybierz film z listy:", titles_list)
 
-        # 🎲 Losowe 3 filmy z pred_rating > 7
-        st.subheader("🎁 3 losowe filmy, które możesz też polubić:")
-        high_rated = df[(df["title"] != selected_movie["title"]) & (df["pred_rating"] > 7)]
-        random_recs = high_rated.sample(min(3, len(high_rated)), random_state=42)
-        st.table(random_recs[["title", "pred_rating"]])
+        selected_movie = df[df["title"] == selected_title].iloc[0]
+
+        if st.button("🔍 Pokaż rekomendacje"):
+            selected_text = pd.DataFrame({"text": [selected_movie["text"]]})
+            pred = predictor.predict(selected_text)
+            st.subheader("📈 Prognozowana Twoja ocena:")
+            st.write(f"**{selected_movie['title']}** → **{pred.values[0]:.2f} / 10**")
+
+            # 🔝 Top 10
+            df["pred_rating"] = predictor.predict(df[["text"]])
+            top_movies = df[df["title"] != selected_movie["title"]].sort_values("pred_rating", ascending=False).head(10)
+            st.subheader("🎥 Top 10 rekomendacji:")
+            st.table(top_movies[["title", "pred_rating"]])
+
+            # 🎲 Losowe 3 filmy z pred_rating > 7
+            st.subheader("🎁 3 losowe filmy, które możesz też polubić:")
+            high_rated = df[(df["title"] != selected_movie["title"]) & (df["pred_rating"] > 7)]
+            random_recs = high_rated.sample(min(3, len(high_rated)), random_state=42)
+            st.table(random_recs[["title", "pred_rating"]])
