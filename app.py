@@ -1,35 +1,44 @@
 import streamlit as st
-import random
+import pandas as pd
+from autogluon.tabular import TabularPredictor
+
+# Ścieżki
+MODEL_PATH = "data/06_models/autogluon/"
+MOVIES_PATH = "data/01_raw/netflix_titles.csv"
 
 
-def load_movies():
-    filepath = os.path.join(os.path.dirname(__file__), "data.txt")
-    with open(filepath, "r", encoding="utf-8") as f:
-        return [line.strip() for line in f.readlines()]
+# Wczytaj dane i model
+@st.cache_data
+def load_data():
+    df = pd.read_csv(MOVIES_PATH)
+    df["text"] = df["title"].astype(str) + ". " + df["description"].fillna('').astype(str) + ". Genres: " + df[
+        "genres"].fillna("[]").astype(str)
+    return df
 
 
-def recommend_movies(watched_movies, all_movies, num_recommendations=3):
-    unwatched = list(set(all_movies) - set(watched_movies))
-    return random.sample(unwatched, min(len(unwatched), num_recommendations))
+@st.cache_resource
+def load_model():
+    return TabularPredictor.load(MODEL_PATH)
 
 
-def main():
-    st.title("Filmowy Doradca")
-    st.write("Wpisz filmy, które już oglądałeś, a my zaproponujemy Ci coś nowego!")
+# Interfejs
+st.title("🎬 Movie Recommender – Based on Your Taste")
 
-    all_movies = load_movies()
+df = load_data()
+predictor = load_model()
 
-    watched_movies = st.multiselect("Wybierz filmy, które widziałeś:", all_movies)
+# 🎯 Wybór filmu
+movie_title = st.selectbox("Wybierz film, który chcesz ocenić:", df["title"].unique())
 
-    if st.button("Pokaż rekomendacje"):
-        if watched_movies:
-            recommendations = recommend_movies(watched_movies, all_movies)
-            st.subheader("Proponowane filmy:")
-            for movie in recommendations:
-                st.write(f"- {movie}")
-        else:
-            st.warning("Wybierz przynajmniej jeden film, aby otrzymać rekomendacje.")
+# 🔮 Predykcja
+selected_movie = df[df["title"] == movie_title][["title", "text"]]
+if not selected_movie.empty:
+    st.subheader("📈 Prognozowana Twoja ocena:")
+    pred = predictor.predict(selected_movie[["text"]])
+    st.write(f"**{movie_title}** → **{pred.values[0]:.2f} / 10**")
 
-
-if __name__ == "__main__":
-    main()
+    # 🔝 Top 10 polecanych filmów
+    st.subheader("🎥 Podobne filmy, które możesz polubić:")
+    df["pred_rating"] = predictor.predict(df[["text"]])
+    top_movies = df[df["title"] != movie_title].sort_values("pred_rating", ascending=False).head(10)
+    st.table(top_movies[["title", "pred_rating"]])

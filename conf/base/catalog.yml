@@ -21,7 +21,7 @@ prepared_training_data:
 
 trained_model:
   type: pickle.PickleDataset
-  filepath: data/06_models/autogluon_predictor.pkl
+  filepath: data/06_models/predictor.pkl
 
 recommendations:
   type: pandas.CSVDataset
