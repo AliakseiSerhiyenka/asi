@@ -6,9 +6,6 @@
 
 This is your new Kedro project, which was generated using `kedro 0.19.13`.
 
-Take a look at the [Kedro documentation](https://docs.kedro.org) to get started.
-
-
 In order to get the best out of the template:
 
 * Don't remove any lines from the `.gitignore` file we provide

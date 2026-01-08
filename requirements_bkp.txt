@@ -4,5 +4,4 @@ kedro~=0.19.13
 notebook
 streamlit~=1.44.1
 pandas~=2.2.3
-
-catboost
+autogluon==1.2
